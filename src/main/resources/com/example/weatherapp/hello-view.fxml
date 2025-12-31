@@ -1,53 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
 
-<HBox spacing="20" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.weatherapp.HelloController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
-
-    <VBox spacing="15" prefWidth="150" styleClass="sidebar">
-        <Button text="☀️ Current" styleClass="nav-button" maxWidth="Infinity"/>
-        <Button text="📊 Hourly" styleClass="nav-button" maxWidth="Infinity"/>
-        <Button text="📍 Maps" styleClass="nav-button" maxWidth="Infinity"/>
-        <Button text="📅 Monthly" styleClass="nav-button" maxWidth="Infinity"/>
+<HBox prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
+    <VBox prefWidth="200" spacing="15" styleClass="sidebar">
+        <padding><Insets bottom="20" left="20" right="20" top="40" /></padding>
+        <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
+        <Region prefHeight="20" />
+        <Button maxWidth="Infinity" styleClass="nav-button-active" text="☀️ Current" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📅 Hourly" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📊 Details" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📅 Monthly" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📈 Trends" />
     </VBox>
 
-    <VBox spacing="20" HBox.hgrow="ALWAYS">
-        <HBox alignment="CENTER_LEFT">
-            <Label text="Satkhira, Khulna, Bangladesh" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-            <Region HBox.hgrow="ALWAYS" />
-            <Button text="Refresh" onAction="#onButtonClick"/>
+    <VBox spacing="20" styleClass="main-content" HBox.hgrow="ALWAYS">
+        <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <TextField fx:id="searchField" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleSearch" styleClass="search-button" text="Search" />
         </HBox>
 
-        <VBox styleClass="card" spacing="10">
-            <Label text="Current weather" style="-fx-text-fill: #A09EBC;"/>
-            <HBox spacing="30" alignment="CENTER_LEFT">
-                <Label text="57°F" styleClass="temp-text" fx:id="tempLabel"/>
-                <VBox alignment="CENTER_LEFT">
-                    <Label text="Mostly sunny" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
-                    <Label text="Feels like 75°" style="-fx-text-fill: #A09EBC;"/>
+        <VBox spacing="15" styleClass="weather-card">
+            <Label fx:id="locationLabel" style="-fx-text-fill: #A09EBC; -fx-font-size: 18;" text="Search a city to see weather" />
+            <HBox alignment="CENTER_LEFT" spacing="40">
+                <Label fx:id="tempLabel" styleClass="big-temp" text="--" />
+                <VBox spacing="5">
+                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 26; -fx-font-weight: bold;" text="Cloudy" />
+                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: #A09EBC;" text="Feels like: --" />
                 </VBox>
             </HBox>
 
-            <Separator opacity="0.1" />
-
-            <HBox spacing="40">
-                <VBox>
-                    <Label text="Wind" style="-fx-text-fill: #A09EBC;"/>
-                    <Label text="1 mph" style="-fx-text-fill: white;"/>
+            <GridPane hgap="30" vgap="10">
+                <VBox GridPane.columnIndex="0">
+                    <Label styleClass="detail-label" text="WIND" />
+                    <Label fx:id="windLabel" styleClass="detail-value" text="-- mph" />
                 </VBox>
-                <VBox>
-                    <Label text="Humidity" style="-fx-text-fill: #A09EBC;"/>
-                    <Label text="71%" style="-fx-text-fill: white;"/>
+                <VBox GridPane.columnIndex="1">
+                    <Label styleClass="detail-label" text="HUMIDITY" />
+                    <Label fx:id="humidityLabel" styleClass="detail-value" text="-- %" />
                 </VBox>
-            </HBox>
+                <VBox GridPane.columnIndex="2">
+                    <Label styleClass="detail-label" text="VISIBILITY" />
+                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="-- km" />
+                </VBox>
+                <VBox GridPane.columnIndex="3">
+                    <Label styleClass="detail-label" text="PRESSURE" />
+                    <Label fx:id="pressureLabel" styleClass="detail-value" text="-- hPa" />
+                </VBox>
+            </GridPane>
         </VBox>
 
-        <StackPane VBox.vgrow="ALWAYS" style="-fx-background-color: #1a1a1a; -fx-background-radius: 20;">
-            <Label text="Map View Area" style="-fx-text-fill: grey;"/>
-        </StackPane>
+        <VBox spacing="10" VBox.vgrow="ALWAYS" styleClass="map-container">
+            <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Location Map" />
+            <WebView fx:id="mapView" VBox.vgrow="ALWAYS" />
+        </VBox>
     </VBox>
 </HBox>
