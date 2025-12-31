@@ -1,16 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.weatherapp.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<HBox spacing="20" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.weatherapp.HelloController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+    <VBox spacing="15" prefWidth="150" styleClass="sidebar">
+        <Button text="☀️ Current" styleClass="nav-button" maxWidth="Infinity"/>
+        <Button text="📊 Hourly" styleClass="nav-button" maxWidth="Infinity"/>
+        <Button text="📍 Maps" styleClass="nav-button" maxWidth="Infinity"/>
+        <Button text="📅 Monthly" styleClass="nav-button" maxWidth="Infinity"/>
+    </VBox>
+
+    <VBox spacing="20" HBox.hgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Satkhira, Khulna, Bangladesh" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="Refresh" onAction="#onButtonClick"/>
+        </HBox>
+
+        <VBox styleClass="card" spacing="10">
+            <Label text="Current weather" style="-fx-text-fill: #A09EBC;"/>
+            <HBox spacing="30" alignment="CENTER_LEFT">
+                <Label text="57°F" styleClass="temp-text" fx:id="tempLabel"/>
+                <VBox alignment="CENTER_LEFT">
+                    <Label text="Mostly sunny" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+                    <Label text="Feels like 75°" style="-fx-text-fill: #A09EBC;"/>
+                </VBox>
+            </HBox>
+
+            <Separator opacity="0.1" />
+
+            <HBox spacing="40">
+                <VBox>
+                    <Label text="Wind" style="-fx-text-fill: #A09EBC;"/>
+                    <Label text="1 mph" style="-fx-text-fill: white;"/>
+                </VBox>
+                <VBox>
+                    <Label text="Humidity" style="-fx-text-fill: #A09EBC;"/>
+                    <Label text="71%" style="-fx-text-fill: white;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <StackPane VBox.vgrow="ALWAYS" style="-fx-background-color: #1a1a1a; -fx-background-radius: 20;">
+            <Label text="Map View Area" style="-fx-text-fill: grey;"/>
+        </StackPane>
+    </VBox>
+</HBox>

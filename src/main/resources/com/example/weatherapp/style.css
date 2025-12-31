@@ -1,0 +1,33 @@
+.root {
+    -fx-background-color: #2D2B52; /* Dark purple background from your image */
+}
+
+.sidebar {
+    -fx-background-color: #3E3B6E;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 14px;
+}
+
+.nav-button:hover {
+    -fx-background-color: #555191;
+    -fx-background-radius: 10;
+}
+
+.card {
+    -fx-background-color: #3E3B6E;
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+}
+
+.temp-text {
+    -fx-font-size: 72px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
