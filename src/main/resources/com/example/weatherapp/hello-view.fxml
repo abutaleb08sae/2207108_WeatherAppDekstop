@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
 
 <HBox prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
     <VBox prefWidth="200" spacing="15" styleClass="sidebar">
@@ -26,31 +27,56 @@
         </HBox>
 
         <VBox spacing="15" styleClass="weather-card">
-            <Label fx:id="locationLabel" style="-fx-text-fill: #A09EBC; -fx-font-size: 18;" text="Search a city to see weather" />
-            <HBox alignment="CENTER_LEFT" spacing="40">
-                <Label fx:id="tempLabel" styleClass="big-temp" text="--" />
-                <VBox spacing="5">
-                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 26; -fx-font-weight: bold;" text="Cloudy" />
-                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: #A09EBC;" text="Feels like: --" />
+            <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Khulna, Bangladesh" />
+
+            <VBox spacing="2">
+                <Label text="Current weather" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+                <Label fx:id="timeLabel" text="8:57 PM" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;"/>
+            </VBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="30">
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label fx:id="weatherIcon" text="🌙" style="-fx-font-size: 60;"/>
+                    <Label fx:id="tempLabel" styleClass="big-temp" text="54°F" />
+                </HBox>
+
+                <VBox alignment="CENTER_LEFT">
+                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Clear" />
+                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: white; -fx-font-size: 16;" text="Feels like 54°" />
                 </VBox>
             </HBox>
 
-            <GridPane hgap="30" vgap="10">
+            <Label fx:id="descriptionSentence" wrapText="true"
+                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0;"
+                   text="The skies will be mostly clear. The low will be 50°." />
+
+            <GridPane hgap="25" vgap="5">
                 <VBox GridPane.columnIndex="0">
-                    <Label styleClass="detail-label" text="WIND" />
-                    <Label fx:id="windLabel" styleClass="detail-value" text="-- mph" />
+                    <Label styleClass="detail-label" text="Air quality ⓘ" />
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Circle radius="4" fill="#FF4B4B"/>
+                        <Label fx:id="aqiLabel" styleClass="detail-value" text="181" />
+                    </HBox>
                 </VBox>
                 <VBox GridPane.columnIndex="1">
-                    <Label styleClass="detail-label" text="HUMIDITY" />
-                    <Label fx:id="humidityLabel" styleClass="detail-value" text="-- %" />
+                    <Label styleClass="detail-label" text="Wind ⓘ" />
+                    <Label fx:id="windLabel" styleClass="detail-value" text="0 mph ▽" />
                 </VBox>
                 <VBox GridPane.columnIndex="2">
-                    <Label styleClass="detail-label" text="VISIBILITY" />
-                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="-- km" />
+                    <Label styleClass="detail-label" text="Humidity ⓘ" />
+                    <Label fx:id="humidityLabel" styleClass="detail-value" text="92%" />
                 </VBox>
                 <VBox GridPane.columnIndex="3">
-                    <Label styleClass="detail-label" text="PRESSURE" />
-                    <Label fx:id="pressureLabel" styleClass="detail-value" text="-- hPa" />
+                    <Label styleClass="detail-label" text="Visibility ⓘ" />
+                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="2.5 mi" />
+                </VBox>
+                <VBox GridPane.columnIndex="4">
+                    <Label styleClass="detail-label" text="Pressure ⓘ" />
+                    <Label fx:id="pressureLabel" styleClass="detail-value" text="29.86 in" />
+                </VBox>
+                <VBox GridPane.columnIndex="5">
+                    <Label styleClass="detail-label" text="Dew point ⓘ" />
+                    <Label fx:id="dewPointLabel" styleClass="detail-value" text="53°" />
                 </VBox>
             </GridPane>
         </VBox>
