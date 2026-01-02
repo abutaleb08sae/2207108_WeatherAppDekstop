@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class HelloController {
     @FXML private TextField searchField;
@@ -41,7 +42,9 @@ public class HelloController {
     }
 
     private void updateUI(WeatherData data) {
-        locationLabel.setText(data.getCity() + ", Bangladesh");
+        String fullCountryName = new Locale("", data.getCountryCode()).getDisplayCountry();
+        locationLabel.setText(data.getCity() + ", " + fullCountryName);
+
         timeLabel.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm a")));
 
         tempLabel.setText(Math.round(data.getTemp()) + "°C");
