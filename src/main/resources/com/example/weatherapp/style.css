@@ -154,6 +154,12 @@
     -fx-background-color: rgba(241, 196, 15, 0.05);
 }
 
+.calendar-day-card-empty {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0.5;
+}
+
 .chart-plot-background {
     -fx-background-color: transparent;
 }

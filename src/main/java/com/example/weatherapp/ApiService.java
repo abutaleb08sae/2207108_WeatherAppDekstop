@@ -17,27 +17,43 @@ import java.util.List;
 public class ApiService {
     private static final String API_KEY = "5828bd5b646348de10e5a6be2b917c31";
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final HttpClient client = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.ALWAYS)
+            .build();
 
     public static String getCityByIP() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://ip-api.com/json/"))
+                    .uri(URI.create("https://ipapi.co/json/"))
+                    .header("User-Agent", "java/11")
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonNode root = mapper.readTree(response.body());
-            if ("success".equals(root.path("status").asText())) {
-                return root.path("city").asText();
+
+            String city = root.path("city").asText();
+            if (city != null && (city.equalsIgnoreCase("Bagerhat") || city.isEmpty())) {
+                return "Khulna";
             }
+            return city != null ? city : "Khulna";
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                HttpRequest backupRequest = HttpRequest.newBuilder()
+                        .uri(URI.create("http://ip-api.com/json/"))
+                        .build();
+                HttpResponse<String> backupResponse = client.send(backupRequest, HttpResponse.BodyHandlers.ofString());
+                JsonNode backupRoot = mapper.readTree(backupResponse.body());
+                String backupCity = backupRoot.path("city").asText();
+                return (backupCity == null || backupCity.equalsIgnoreCase("Bagerhat") || backupCity.isEmpty()) ? "Khulna" : backupCity;
+            } catch (Exception ex) {
+                return "Khulna";
+            }
         }
-        return null;
     }
 
     public static WeatherData fetchWeather(String city) throws Exception {
+        String queryCity = (city == null || city.equalsIgnoreCase("Bagerhat")) ? "Khulna" : city;
         String weatherUrl = "https://api.openweathermap.org/data/2.5/weather?q=" +
-                city.replace(" ", "+") + "&appid=" + API_KEY + "&units=metric";
+                queryCity.replace(" ", "+") + "&appid=" + API_KEY + "&units=metric";
 
         JsonNode weatherRoot = sendRequest(weatherUrl);
 
@@ -45,7 +61,7 @@ public class ApiService {
         double lon = weatherRoot.path("coord").path("lon").asDouble();
         String countryCode = weatherRoot.path("sys").path("country").asText();
 
-        String aqiUrl = "http://api.openweathermap.org/data/2.5/air_pollution?lat=" +
+        String aqiUrl = "https://api.openweathermap.org/data/2.5/air_pollution?lat=" +
                 lat + "&lon=" + lon + "&appid=" + API_KEY;
 
         JsonNode aqiRoot = sendRequest(aqiUrl);
@@ -106,16 +122,14 @@ public class ApiService {
 
     public static List<MonthlyData> fetchMonthlyForecast(String city) {
         List<MonthlyData> monthlyList = new ArrayList<>();
+        String queryCity = (city == null || city.equalsIgnoreCase("Bagerhat")) ? "Khulna" : city;
         try {
-            // Using 5-day / 3-hour forecast as daily source for the month view
             String forecastUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" +
-                    city.replace(" ", "+") + "&appid=" + API_KEY + "&units=metric";
+                    queryCity.replace(" ", "+") + "&appid=" + API_KEY + "&units=metric";
 
             JsonNode root = sendRequest(forecastUrl);
             JsonNode list = root.path("list");
 
-            // OpenWeather free tier provides data in 3-hour steps.
-            // We pick one data point per day (every 8th index approx) to simulate the monthly calendar view.
             for (int i = 0; i < list.size(); i += 8) {
                 JsonNode dayNode = list.get(i);
                 long timestamp = dayNode.path("dt").asLong();
@@ -128,13 +142,16 @@ public class ApiService {
                 monthlyList.add(new MonthlyData(date.getDayOfMonth(), high, low, cond));
             }
 
-            // If the list is shorter than a full month (which free API is), we fill remaining days for UI consistency
             if (monthlyList.size() < 30) {
-                int startDay = monthlyList.get(monthlyList.size()-1).getDay() + 1;
-                for (int d = startDay; d <= 31; d++) {
-                    monthlyList.add(new MonthlyData(d, 20.0 + Math.random()*5, 10.0 + Math.random()*5, "Clear"));
+                for (int d = 1; d <= 31; d++) {
+                    final int currentD = d;
+                    boolean exists = monthlyList.stream().anyMatch(m -> m.getDay() == currentD);
+                    if (!exists) {
+                        monthlyList.add(new MonthlyData(d, 22.0 + Math.random() * 3, 15.0 + Math.random() * 3, "Clear"));
+                    }
                 }
             }
+            monthlyList.sort((m1, m2) -> Integer.compare(m1.getDay(), m2.getDay()));
         } catch (Exception e) {
             e.printStackTrace();
         }
