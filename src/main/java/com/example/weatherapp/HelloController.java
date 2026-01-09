@@ -173,38 +173,45 @@ public class HelloController {
     }
 
     private void populateHourlyUI() {
+        if (hourlyCardsContainer == null) return;
         hourlyCardsContainer.getChildren().clear();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         double max = -100, min = 100;
 
-        for (WeatherData.HourlyPoint point : currentWeatherData.getHourlyForecast()) {
-            VBox card = new VBox(8);
-            card.setAlignment(Pos.CENTER);
-            card.getStyleClass().add("mini-forecast-card");
+        if (currentWeatherData.getHourlyForecast() != null) {
+            for (WeatherData.HourlyPoint point : currentWeatherData.getHourlyForecast()) {
+                VBox card = new VBox(8);
+                card.setAlignment(Pos.CENTER);
+                card.getStyleClass().add("mini-forecast-card");
 
-            Label time = new Label(point.time());
-            time.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
-            Label icon = new Label(getEmojiForCondition(point.condition().toLowerCase()));
-            icon.setStyle("-fx-font-size: 30;");
-            Label temp = new Label(Math.round(point.temp()) + "°");
-            temp.setStyle("-fx-text-fill: white; -fx-font-size: 18;");
+                Label time = new Label(point.time());
+                time.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+                Label icon = new Label(getEmojiForCondition(point.condition().toLowerCase()));
+                icon.setStyle("-fx-font-size: 30;");
+                Label temp = new Label(Math.round(point.temp()) + "°");
+                temp.setStyle("-fx-text-fill: white; -fx-font-size: 18;");
 
-            card.getChildren().addAll(time, icon, temp);
-            hourlyCardsContainer.getChildren().add(card);
+                card.getChildren().addAll(time, icon, temp);
+                hourlyCardsContainer.getChildren().add(card);
 
-            series.getData().add(new XYChart.Data<>(point.time(), point.temp()));
-            if (point.temp() > max) max = point.temp();
-            if (point.temp() < min) min = point.temp();
+                series.getData().add(new XYChart.Data<>(point.time(), point.temp()));
+                if (point.temp() > max) max = point.temp();
+                if (point.temp() < min) min = point.temp();
+            }
         }
 
-        tempChart.getData().clear();
-        tempChart.getData().add(series);
-        highTempLabel.setText(Math.round(max) + "°C");
-        lowTempLabel.setText(Math.round(min) + "°C");
+        if (tempChart != null) {
+            tempChart.getData().clear();
+            tempChart.getData().add(series);
+        }
+        if (highTempLabel != null) highTempLabel.setText(Math.round(max) + "°C");
+        if (lowTempLabel != null) lowTempLabel.setText(Math.round(min) + "°C");
     }
 
     private void populateDetailsUI() {
-        detailTimeHeader.setText("Weather details " + LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm A")));
+        if (detailTimeHeader != null) {
+            detailTimeHeader.setText("Weather details " + LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm A")));
+        }
         if (detTemp != null) detTemp.setText(Math.round(currentWeatherData.getTemp()) + "°");
         if (detWind != null) detWind.setText(currentWeatherData.getWindSpeed() + " mph");
         if (detHum != null) detHum.setText(currentWeatherData.getHumidity() + "%");
