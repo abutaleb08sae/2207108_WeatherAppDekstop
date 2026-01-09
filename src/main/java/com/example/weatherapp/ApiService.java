@@ -31,10 +31,10 @@ public class ApiService {
             JsonNode root = mapper.readTree(response.body());
 
             String city = root.path("city").asText();
-            if (city != null && (city.equalsIgnoreCase("Bagerhat") || city.isEmpty())) {
+            if (city == null || city.equalsIgnoreCase("Bagerhat") || city.isEmpty()) {
                 return "Khulna";
             }
-            return city != null ? city : "Khulna";
+            return city;
         } catch (Exception e) {
             try {
                 HttpRequest backupRequest = HttpRequest.newBuilder()
@@ -54,9 +54,16 @@ public class ApiService {
         String queryCity = (city == null || city.equalsIgnoreCase("Bagerhat")) ? "Khulna" : city;
         String weatherUrl = "https://api.openweathermap.org/data/2.5/weather?q=" +
                 queryCity.replace(" ", "+") + "&appid=" + API_KEY + "&units=metric";
+        return processWeatherData(sendRequest(weatherUrl));
+    }
 
-        JsonNode weatherRoot = sendRequest(weatherUrl);
+    public static WeatherData fetchWeatherByCoords(double lat, double lon) throws Exception {
+        String weatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" +
+                lat + "&lon=" + lon + "&appid=" + API_KEY + "&units=metric";
+        return processWeatherData(sendRequest(weatherUrl));
+    }
 
+    private static WeatherData processWeatherData(JsonNode weatherRoot) throws Exception {
         double lat = weatherRoot.path("coord").path("lat").asDouble();
         double lon = weatherRoot.path("coord").path("lon").asDouble();
         String countryCode = weatherRoot.path("sys").path("country").asText();
@@ -142,7 +149,7 @@ public class ApiService {
                 monthlyList.add(new MonthlyData(date.getDayOfMonth(), high, low, cond));
             }
 
-            if (monthlyList.size() < 30) {
+            if (monthlyList.size() < 28) {
                 for (int d = 1; d <= 31; d++) {
                     final int currentD = d;
                     boolean exists = monthlyList.stream().anyMatch(m -> m.getDay() == currentD);

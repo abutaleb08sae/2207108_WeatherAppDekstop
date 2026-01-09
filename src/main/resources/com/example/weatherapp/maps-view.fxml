@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.geometry.Insets?>
+
+<HBox prefHeight="850.0" prefWidth="1250.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
+    <VBox prefWidth="240" minWidth="240" spacing="10" styleClass="sidebar">
+        <padding><Insets bottom="20" left="15" right="15" top="30" /></padding>
+        <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
+        <Region prefHeight="10" />
+        <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button" text="☀️ Current" />
+        <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
+        <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
+        <Button maxWidth="Infinity" onAction="#showMapsScene" styleClass="nav-button-active" text="📍 Maps" />
+        <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
+        <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
+    </VBox>
+
+    <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: #1A1938;">
+        <padding><Insets bottom="15" left="20" right="20" top="15" /></padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="Weather Maps" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-size: 13;" text="Click on the map to view weather for that location" />
+        </HBox>
+        <AnchorPane VBox.vgrow="ALWAYS" style="-fx-background-color: #252440; -fx-background-radius: 15; -fx-border-color: #3E3B6E; -fx-border-radius: 15; -fx-border-width: 1;">
+            <WebView fx:id="interactiveMapView" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" />
+        </AnchorPane>
+    </VBox>
+</HBox>

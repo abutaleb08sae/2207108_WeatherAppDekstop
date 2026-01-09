@@ -19,12 +19,11 @@
             </padding>
             <children>
                 <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
-                <Region prefHeight="20" />
-
+                <Region prefHeight="10" />
                 <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button" text="☀️ Current" />
                 <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
                 <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
-                <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
+                <Button maxWidth="Infinity" onAction="#showMapsScene" styleClass="nav-button" text="📍 Maps" />
                 <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
                 <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button-active" text="📈 Trends" />
             </children>

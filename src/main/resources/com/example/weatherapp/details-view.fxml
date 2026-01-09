@@ -13,7 +13,7 @@
         <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button" text="☀️ Current" />
         <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
         <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button-active" text="📊 Details" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
+        <Button maxWidth="Infinity" onAction="#showMapsScene" styleClass="nav-button" text="📍 Maps" />
         <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
         <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
     </VBox>

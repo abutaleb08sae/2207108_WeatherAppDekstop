@@ -8,9 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,7 +36,7 @@ public class HelloController {
     @FXML private Label tempLabel, locationLabel, conditionLabel, feelsLikeLabel;
     @FXML private Label windLabel, humidityLabel, pressureLabel, visibilityLabel;
     @FXML private Label aqiLabel, dewPointLabel, timeLabel, descriptionSentence, weatherIcon;
-    @FXML private WebView mapView;
+    @FXML private WebView mapView, interactiveMapView;
     @FXML private Circle aqiCircle;
 
     @FXML private HBox hourlyCardsContainer, monthBar;
@@ -56,6 +59,9 @@ public class HelloController {
             handleRefresh();
         } else {
             refreshAllUIComponents();
+        }
+        if (interactiveMapView != null) {
+            loadInteractiveMap();
         }
     }
 
@@ -130,7 +136,6 @@ public class HelloController {
         }
     }
 
-    // --- NAVIGATION METHODS ---
     @FXML
     public void showHourlyScene(ActionEvent event) { switchScene(event, "hourly-view.fxml"); }
 
@@ -146,6 +151,9 @@ public class HelloController {
     @FXML
     public void showTrendsScene(ActionEvent event) { switchScene(event, "trends-view.fxml"); }
 
+    @FXML
+    public void showMapsScene(ActionEvent event) { switchScene(event, "maps-view.fxml"); }
+
     private void switchScene(ActionEvent event, String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
@@ -155,6 +163,59 @@ public class HelloController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadInteractiveMap() {
+        if (interactiveMapView == null || currentWeatherData == null) return;
+
+        String script = "<html>" +
+                "<head>" +
+                "<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>" +
+                "<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>" +
+                "<style>body { margin: 0; } #map { height: 100vh; width: 100vw; }</style>" +
+                "</head>" +
+                "<body>" +
+                "<div id='map'></div>" +
+                "<script>" +
+                "var map = L.map('map').setView([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "], 8);" +
+                "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);" +
+                "var marker = L.marker([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "]).addTo(map);" +
+                "map.on('click', function(e) {" +
+                "   window.location.href = 'app://click?lat=' + e.latlng.lat + '&lon=' + e.latlng.lng;" +
+                "});" +
+                "</script>" +
+                "</body></html>";
+
+        interactiveMapView.getEngine().loadContent(script);
+        interactiveMapView.getEngine().locationProperty().addListener((obs, oldLoc, newLoc) -> {
+            if (newLoc != null && newLoc.startsWith("app://click")) {
+                String query = newLoc.split("\\?")[1];
+                double lat = Double.parseDouble(query.split("&")[0].split("=")[1]);
+                double lon = Double.parseDouble(query.split("&")[1].split("=")[1]);
+                fetchWeatherByCoords(lat, lon);
+            }
+        });
+    }
+
+    private void fetchWeatherByCoords(double lat, double lon) {
+        Task<WeatherData> task = new Task<>() {
+            @Override
+            protected WeatherData call() throws Exception {
+                return ApiService.fetchWeatherByCoords(lat, lon);
+            }
+        };
+        task.setOnSucceeded(e -> {
+            currentWeatherData = task.getValue();
+            Platform.runLater(() -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+                    Parent root = loader.load();
+                    Stage stage = (Stage) interactiveMapView.getScene().getWindow();
+                    stage.getScene().setRoot(root);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            });
+        });
+        new Thread(task).start();
     }
 
     private void populateHourlyUI() {
