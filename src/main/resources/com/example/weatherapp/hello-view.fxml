@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
@@ -7,7 +8,9 @@
 
 <HBox prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
     <VBox prefWidth="240" spacing="15" styleClass="sidebar">
-        <padding><Insets bottom="20" left="20" right="20" top="40" /></padding>
+        <padding>
+            <Insets bottom="20" left="20" right="20" top="40" />
+        </padding>
         <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
         <Region prefHeight="10" />
 
@@ -17,30 +20,37 @@
         <Button maxWidth="Infinity" onAction="#showMapsScene" styleClass="nav-button" text="📍 Maps" />
         <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
         <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
-
-
     </VBox>
 
     <VBox spacing="20" styleClass="main-content" HBox.hgrow="ALWAYS">
-        <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
+        <padding>
+            <Insets bottom="20" left="30" right="30" top="20" />
+        </padding>
 
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <TextField fx:id="searchField" onAction="#handleSearch" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
-            <Button onAction="#handleSearch" styleClass="search-button" text="Search" />
-            <Button onAction="#handleRefresh" styleClass="search-button" text="🔄" />
-        </HBox>
+        <AnchorPane>
+            <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <TextField fx:id="searchField" onAction="#handleSearch" onMouseClicked="#showHistory" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
+                    <Button onAction="#handleSearch" styleClass="search-button" text="Search" />
+                    <Button onAction="#handleRefresh" styleClass="search-button" text="🔄" />
+                </HBox>
+            </VBox>
+
+            <ListView fx:id="historyListView" managed="false" visible="false" maxHeight="250" styleClass="history-list"
+                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="46.0" />
+        </AnchorPane>
 
         <VBox fx:id="weatherCard" spacing="15" styleClass="weather-card">
             <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Detecting location..." />
 
             <VBox spacing="2">
-                <Label text="Current weather" style="-fx-text-fill: white; -fx-font-size: 14;"/>
-                <Label fx:id="timeLabel" text="--:-- --" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;"/>
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Current weather" />
+                <Label fx:id="timeLabel" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;" text="--:-- --" />
             </VBox>
 
             <HBox alignment="CENTER_LEFT" spacing="30">
                 <HBox alignment="CENTER_LEFT" spacing="15">
-                    <Label fx:id="weatherIcon" text="☁️" style="-fx-font-size: 80; -fx-text-fill: white;"/>
+                    <Label fx:id="weatherIcon" style="-fx-font-size: 80; -fx-text-fill: white;" text="☁️" />
                     <Label fx:id="tempLabel" styleClass="big-temp" text="--°C" />
                 </HBox>
 
@@ -50,15 +60,13 @@
                 </VBox>
             </HBox>
 
-            <Label fx:id="descriptionSentence" wrapText="true"
-                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0; -fx-font-style: italic;"
-                   text="Waiting for data..." />
+            <Label fx:id="descriptionSentence" style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0; -fx-font-style: italic;" text="Waiting for data..." wrapText="true" />
 
             <GridPane hgap="25" vgap="5">
                 <VBox GridPane.columnIndex="0">
                     <Label styleClass="detail-label" text="Air quality ⓘ" />
-                    <HBox spacing="5" alignment="CENTER_LEFT">
-                        <Circle fx:id="aqiCircle" radius="4" fill="#A09EBC"/>
+                    <HBox alignment="CENTER_LEFT" spacing="5">
+                        <Circle fx:id="aqiCircle" fill="#A09EBC" radius="4" />
                         <Label fx:id="aqiLabel" styleClass="detail-value" text="--" />
                     </HBox>
                 </VBox>
@@ -85,7 +93,7 @@
             </GridPane>
         </VBox>
 
-        <VBox spacing="10" VBox.vgrow="ALWAYS" styleClass="map-container">
+        <VBox styleClass="map-container" spacing="10" VBox.vgrow="ALWAYS">
             <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Location Map" />
             <WebView fx:id="mapView" VBox.vgrow="ALWAYS" />
         </VBox>

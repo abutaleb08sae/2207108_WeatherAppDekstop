@@ -8,14 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
@@ -33,6 +31,7 @@ import java.util.Locale;
 
 public class HelloController {
     @FXML private TextField searchField;
+    @FXML private ListView<String> historyListView;
     @FXML private Label tempLabel, locationLabel, conditionLabel, feelsLikeLabel;
     @FXML private Label windLabel, humidityLabel, pressureLabel, visibilityLabel;
     @FXML private Label aqiLabel, dewPointLabel, timeLabel, descriptionSentence, weatherIcon;
@@ -55,6 +54,7 @@ public class HelloController {
 
     @FXML
     public void initialize() {
+        setupHistoryUI();
         if (currentWeatherData == null) {
             handleRefresh();
         } else {
@@ -62,6 +62,92 @@ public class HelloController {
         }
         if (interactiveMapView != null) {
             loadInteractiveMap();
+        }
+    }
+
+    private void setupHistoryUI() {
+        if (historyListView == null) return;
+
+        historyListView.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String city, boolean empty) {
+                super.updateItem(city, empty);
+                if (empty || city == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    HBox container = new HBox();
+                    container.setAlignment(Pos.CENTER_LEFT);
+                    container.setSpacing(10);
+
+                    Label nameLabel = new Label(city);
+                    nameLabel.setStyle("-fx-text-fill: white;");
+                    nameLabel.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(nameLabel, Priority.ALWAYS);
+
+                    Label deleteBtn = new Label("✕");
+                    deleteBtn.getStyleClass().add("delete-icon");
+                    deleteBtn.setOnMouseClicked(e -> {
+                        DatabaseManager.deleteSearch(city);
+                        updateHistoryList();
+                        e.consume();
+                    });
+
+                    container.getChildren().addAll(nameLabel, deleteBtn);
+                    setGraphic(container);
+
+                    this.setOnMouseClicked(e -> {
+                        if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY && !deleteBtn.isHover()) {
+                            searchField.setText(city);
+                            handleSearch();
+                            hideHistory();
+                        }
+                    });
+                }
+            }
+        });
+
+        searchField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                updateHistoryList();
+            } else {
+                Platform.runLater(() -> {
+                    if (!historyListView.isFocused()) {
+                        hideHistory();
+                    }
+                });
+            }
+        });
+
+        historyListView.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal && !searchField.isFocused()) {
+                hideHistory();
+            }
+        });
+    }
+
+    @FXML
+    public void showHistory() {
+        updateHistoryList();
+    }
+
+    private void updateHistoryList() {
+        if (historyListView == null) return;
+        List<String> history = DatabaseManager.getHistory();
+        if (!history.isEmpty()) {
+            historyListView.getItems().setAll(history);
+            historyListView.setVisible(true);
+            historyListView.setManaged(true);
+            historyListView.toFront();
+        } else {
+            hideHistory();
+        }
+    }
+
+    private void hideHistory() {
+        if (historyListView != null) {
+            historyListView.setVisible(false);
+            historyListView.setManaged(false);
         }
     }
 
@@ -91,7 +177,11 @@ public class HelloController {
     public void handleSearch() {
         if (searchField == null) return;
         String city = searchField.getText().trim();
-        if (!city.isEmpty()) performSearch(city);
+        if (!city.isEmpty()) {
+            DatabaseManager.saveSearch(city);
+            performSearch(city);
+            hideHistory();
+        }
     }
 
     private void performSearch(String city) {
@@ -110,6 +200,7 @@ public class HelloController {
     }
 
     private void updateUI(WeatherData data) {
+        if (data == null) return;
         String fullCountryName = new Locale("", data.getCountryCode()).getDisplayCountry();
         if (locationLabel != null) locationLabel.setText(data.getCity() + ", " + fullCountryName);
         if (timeLabel != null) timeLabel.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm a")));
@@ -136,23 +227,12 @@ public class HelloController {
         }
     }
 
-    @FXML
-    public void showHourlyScene(ActionEvent event) { switchScene(event, "hourly-view.fxml"); }
-
-    @FXML
-    public void showCurrentScene(ActionEvent event) { switchScene(event, "hello-view.fxml"); }
-
-    @FXML
-    public void showDetailsScene(ActionEvent event) { switchScene(event, "details-view.fxml"); }
-
-    @FXML
-    public void showMonthlyScene(ActionEvent event) { switchScene(event, "monthly-view.fxml"); }
-
-    @FXML
-    public void showTrendsScene(ActionEvent event) { switchScene(event, "trends-view.fxml"); }
-
-    @FXML
-    public void showMapsScene(ActionEvent event) { switchScene(event, "maps-view.fxml"); }
+    @FXML public void showHourlyScene(ActionEvent event) { switchScene(event, "hourly-view.fxml"); }
+    @FXML public void showCurrentScene(ActionEvent event) { switchScene(event, "hello-view.fxml"); }
+    @FXML public void showDetailsScene(ActionEvent event) { switchScene(event, "details-view.fxml"); }
+    @FXML public void showMonthlyScene(ActionEvent event) { switchScene(event, "monthly-view.fxml"); }
+    @FXML public void showTrendsScene(ActionEvent event) { switchScene(event, "trends-view.fxml"); }
+    @FXML public void showMapsScene(ActionEvent event) { switchScene(event, "maps-view.fxml"); }
 
     private void switchScene(ActionEvent event, String fxmlFile) {
         try {
@@ -167,25 +247,7 @@ public class HelloController {
 
     private void loadInteractiveMap() {
         if (interactiveMapView == null || currentWeatherData == null) return;
-
-        String script = "<html>" +
-                "<head>" +
-                "<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>" +
-                "<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>" +
-                "<style>body { margin: 0; } #map { height: 100vh; width: 100vw; }</style>" +
-                "</head>" +
-                "<body>" +
-                "<div id='map'></div>" +
-                "<script>" +
-                "var map = L.map('map').setView([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "], 8);" +
-                "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);" +
-                "var marker = L.marker([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "]).addTo(map);" +
-                "map.on('click', function(e) {" +
-                "   window.location.href = 'app://click?lat=' + e.latlng.lat + '&lon=' + e.latlng.lng;" +
-                "});" +
-                "</script>" +
-                "</body></html>";
-
+        String script = "<html><head><link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/><script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script><style>body { margin: 0; } #map { height: 100vh; width: 100vw; }</style></head><body><div id='map'></div><script>var map = L.map('map').setView([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "], 8);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);var marker = L.marker([" + currentWeatherData.getLatitude() + ", " + currentWeatherData.getLongitude() + "]).addTo(map);map.on('click', function(e) { window.location.href = 'app://click?lat=' + e.latlng.lat + '&lon=' + e.latlng.lng; });</script></body></html>";
         interactiveMapView.getEngine().loadContent(script);
         interactiveMapView.getEngine().locationProperty().addListener((obs, oldLoc, newLoc) -> {
             if (newLoc != null && newLoc.startsWith("app://click")) {
@@ -206,6 +268,7 @@ public class HelloController {
         };
         task.setOnSucceeded(e -> {
             currentWeatherData = task.getValue();
+            DatabaseManager.saveSearch(currentWeatherData.getCity());
             Platform.runLater(() -> {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
@@ -261,17 +324,13 @@ public class HelloController {
         if (detailVisibility != null) detailVisibility.setText("10 km");
         if (detailPressure != null) detailPressure.setText(currentWeatherData.getPressure() + " hPa");
         if (feelsLikeLabel != null) feelsLikeLabel.setText(Math.round(currentWeatherData.getTemp()) + "°");
-
         double dp = currentWeatherData.getTemp() - ((100 - currentWeatherData.getHumidity()) / 5.0);
         if (detDew != null) detDew.setText(Math.round(dp) + "° Dew point");
-
         if (miniTempChart != null) {
             miniTempChart.getData().clear();
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             if (currentWeatherData.getHourlyForecast() != null) {
-                currentWeatherData.getHourlyForecast().stream().limit(7).forEach(p ->
-                        series.getData().add(new XYChart.Data<>(p.time(), p.temp()))
-                );
+                currentWeatherData.getHourlyForecast().stream().limit(7).forEach(p -> series.getData().add(new XYChart.Data<>(p.time(), p.temp())));
             }
             miniTempChart.getData().add(series);
         }
@@ -283,13 +342,10 @@ public class HelloController {
         trendsChart.getData().clear();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Temperature Trend");
-
         double max = -100, min = 100;
         if (currentWeatherData.getHourlyForecast() != null) {
             for (WeatherData.HourlyPoint point : currentWeatherData.getHourlyForecast()) {
-                XYChart.Data<String, Number> dataPoint = new XYChart.Data<>(point.time(), point.temp());
-                series.getData().add(dataPoint);
-
+                series.getData().add(new XYChart.Data<>(point.time(), point.temp()));
                 if (point.temp() > max) max = point.temp();
                 if (point.temp() < min) min = point.temp();
             }
@@ -318,14 +374,9 @@ public class HelloController {
         LocalDate firstOfMonth = LocalDate.of(year, monthValue, 1);
         int dayOfWeekOffset = firstOfMonth.getDayOfWeek().getValue() % 7;
         int daysInMonth = YearMonth.of(year, monthValue).lengthOfMonth();
-
         Task<List<MonthlyData>> task = new Task<>() {
-            @Override
-            protected List<MonthlyData> call() {
-                return ApiService.fetchMonthlyForecast(currentWeatherData.getCity());
-            }
+            @Override protected List<MonthlyData> call() { return ApiService.fetchMonthlyForecast(currentWeatherData.getCity()); }
         };
-
         task.setOnSucceeded(e -> {
             List<MonthlyData> monthData = task.getValue();
             int dayCounter = 1;
@@ -334,7 +385,6 @@ public class HelloController {
                     int slotIndex = (row * 7) + col;
                     if (slotIndex < dayOfWeekOffset || dayCounter > daysInMonth) {
                         VBox emptyBox = new VBox();
-                        emptyBox.getStyleClass().add("calendar-day-card-empty");
                         calendarGrid.add(emptyBox, col, row);
                         continue;
                     }
@@ -342,10 +392,8 @@ public class HelloController {
                     dayCard.getStyleClass().add("calendar-day-card");
                     Label dayNum = new Label(String.valueOf(dayCounter));
                     dayNum.setStyle("-fx-text-fill: #5D5A88; -fx-font-size: 14;");
-
                     final int finalDay = dayCounter;
                     MonthlyData data = monthData.stream().filter(d -> d.getDay() == finalDay).findFirst().orElse(null);
-
                     if (data != null) {
                         HBox content = new HBox(10);
                         content.setAlignment(Pos.CENTER_LEFT);
