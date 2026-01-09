@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox prefHeight="850.0" prefWidth="1250.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
+    <VBox prefWidth="240" minWidth="240" spacing="10" styleClass="sidebar">
+        <padding><Insets bottom="20" left="15" right="15" top="30" /></padding>
+        <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
+        <Region prefHeight="10" />
+        <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button" text="☀️ Current" />
+        <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
+        <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
+        <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button-active" text="📅 Monthly" />
+        <Button maxWidth="Infinity" styleClass="nav-button" text="📈 Trends" />
+    </VBox>
+
+    <VBox spacing="15" HBox.hgrow="ALWAYS" style="-fx-background-color: #1A1938;">
+        <padding><Insets bottom="20" left="25" right="25" top="20" /></padding>
+
+        <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Monthly" />
+
+        <ScrollPane fitToHeight="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;" vbarPolicy="NEVER">
+            <HBox fx:id="monthBar" spacing="10">
+                <Button onAction="#handleMonthClick" styleClass="month-tab-active" text="January" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="February" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="March" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="April" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="May" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="June" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="July" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="August" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="September" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="October" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="November" />
+                <Button onAction="#handleMonthClick" styleClass="month-tab" text="December" />
+            </HBox>
+        </ScrollPane>
+
+        <GridPane hgap="5" alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+                <ColumnConstraints percentWidth="14.2" halignment="CENTER" />
+            </columnConstraints>
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" />
+            <Label style="-fx-text-fill: #A09EBC; -fx-font-weight: bold;" text="Sat" GridPane.columnIndex="6" />
+        </GridPane>
+
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;" hbarPolicy="NEVER">
+            <GridPane fx:id="calendarGrid" hgap="10" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                    <ColumnConstraints percentWidth="14.2" />
+                </columnConstraints>
+            </GridPane>
+        </ScrollPane>
+    </VBox>
+</HBox>

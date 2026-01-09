@@ -6,11 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,6 +21,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -33,7 +33,7 @@ public class HelloController {
     @FXML private WebView mapView;
     @FXML private Circle aqiCircle;
 
-    @FXML private HBox hourlyCardsContainer;
+    @FXML private HBox hourlyCardsContainer, monthBar;
     @FXML private LineChart<String, Number> tempChart;
     @FXML private Label highTempLabel, lowTempLabel;
 
@@ -41,12 +41,17 @@ public class HelloController {
     @FXML private LineChart<String, Number> miniTempChart;
     @FXML private Polygon compassNeedle;
     @FXML private Arc uvArc;
+    @FXML private GridPane calendarGrid;
 
     private static WeatherData currentWeatherData;
 
     @FXML
     public void initialize() {
-        if (locationLabel != null) {
+        if (calendarGrid != null) {
+            if (currentWeatherData != null) {
+                populateCalendar(1);
+            }
+        } else if (locationLabel != null) {
             handleRefresh();
         } else if (hourlyCardsContainer != null && currentWeatherData != null) {
             populateHourlyUI();
@@ -150,26 +155,35 @@ public class HelloController {
         switchScene("details-view.fxml");
     }
 
+    @FXML
+    public void showMonthlyScene() {
+        if (currentWeatherData == null) {
+            handleRefresh();
+        }
+        switchScene("monthly-view.fxml");
+    }
+
     private void switchScene(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
-
-            Stage stage = null;
-            if (searchField != null && searchField.getScene() != null) {
-                stage = (Stage) searchField.getScene().getWindow();
-            } else if (hourlyCardsContainer != null && hourlyCardsContainer.getScene() != null) {
-                stage = (Stage) hourlyCardsContainer.getScene().getWindow();
-            } else if (detailTimeHeader != null && detailTimeHeader.getScene() != null) {
-                stage = (Stage) detailTimeHeader.getScene().getWindow();
-            }
-
+            Stage stage = findStage();
             if (stage != null) {
                 stage.getScene().setRoot(root);
             }
         } catch (Exception e) {
+            System.err.println("Error loading scene: " + fxmlFile);
             e.printStackTrace();
         }
+    }
+
+    private Stage findStage() {
+        if (calendarGrid != null && calendarGrid.getScene() != null) return (Stage) calendarGrid.getScene().getWindow();
+        if (searchField != null && searchField.getScene() != null) return (Stage) searchField.getScene().getWindow();
+        if (hourlyCardsContainer != null && hourlyCardsContainer.getScene() != null) return (Stage) hourlyCardsContainer.getScene().getWindow();
+        if (detailTimeHeader != null && detailTimeHeader.getScene() != null) return (Stage) detailTimeHeader.getScene().getWindow();
+        if (locationLabel != null && locationLabel.getScene() != null) return (Stage) locationLabel.getScene().getWindow();
+        return null;
     }
 
     private void populateHourlyUI() {
@@ -177,29 +191,24 @@ public class HelloController {
         hourlyCardsContainer.getChildren().clear();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         double max = -100, min = 100;
-
         if (currentWeatherData.getHourlyForecast() != null) {
             for (WeatherData.HourlyPoint point : currentWeatherData.getHourlyForecast()) {
                 VBox card = new VBox(8);
                 card.setAlignment(Pos.CENTER);
                 card.getStyleClass().add("mini-forecast-card");
-
                 Label time = new Label(point.time());
                 time.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
                 Label icon = new Label(getEmojiForCondition(point.condition().toLowerCase()));
                 icon.setStyle("-fx-font-size: 30;");
                 Label temp = new Label(Math.round(point.temp()) + "°");
                 temp.setStyle("-fx-text-fill: white; -fx-font-size: 18;");
-
                 card.getChildren().addAll(time, icon, temp);
                 hourlyCardsContainer.getChildren().add(card);
-
                 series.getData().add(new XYChart.Data<>(point.time(), point.temp()));
                 if (point.temp() > max) max = point.temp();
                 if (point.temp() < min) min = point.temp();
             }
         }
-
         if (tempChart != null) {
             tempChart.getData().clear();
             tempChart.getData().add(series);
@@ -209,9 +218,7 @@ public class HelloController {
     }
 
     private void populateDetailsUI() {
-        if (detailTimeHeader != null) {
-            detailTimeHeader.setText("Weather details " + LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm A")));
-        }
+        if (detailTimeHeader != null) detailTimeHeader.setText("Weather details " + LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm A")));
         if (detTemp != null) detTemp.setText(Math.round(currentWeatherData.getTemp()) + "°");
         if (detWind != null) detWind.setText(currentWeatherData.getWindSpeed() + " mph");
         if (detHum != null) detHum.setText(currentWeatherData.getHumidity() + "%");
@@ -221,10 +228,8 @@ public class HelloController {
         if (detailVisibility != null) detailVisibility.setText("10 km");
         if (detailPressure != null) detailPressure.setText(currentWeatherData.getPressure() + " hPa");
         if (feelsLikeLabel != null) feelsLikeLabel.setText(Math.round(currentWeatherData.getTemp()) + "°");
-
         double dp = currentWeatherData.getTemp() - ((100 - currentWeatherData.getHumidity()) / 5.0);
         if (detDew != null) detDew.setText(Math.round(dp) + "° Dew point");
-
         if (miniTempChart != null) {
             miniTempChart.getData().clear();
             XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -237,10 +242,59 @@ public class HelloController {
             }
             miniTempChart.getData().add(series);
         }
+        if (compassNeedle != null) compassNeedle.setRotate(45);
+    }
 
-        if (compassNeedle != null) {
-            compassNeedle.setRotate(45);
-        }
+    @FXML
+    public void handleMonthClick(javafx.event.ActionEvent event) {
+        if (monthBar == null) return;
+        Button clicked = (Button) event.getSource();
+        monthBar.getChildren().forEach(node -> node.getStyleClass().setAll("month-tab"));
+        clicked.getStyleClass().setAll("month-tab-active");
+        populateCalendar(1);
+    }
+
+    private void populateCalendar(int monthIndex) {
+        if (calendarGrid == null || currentWeatherData == null) return;
+        calendarGrid.getChildren().clear();
+
+        Task<List<MonthlyData>> task = new Task<>() {
+            @Override
+            protected List<MonthlyData> call() {
+                return ApiService.fetchMonthlyForecast(currentWeatherData.getCity());
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            List<MonthlyData> monthData = task.getValue();
+            int dayIndex = 0;
+            for (int row = 0; row < 5; row++) {
+                for (int col = 0; col < 7; col++) {
+                    if (dayIndex >= monthData.size()) break;
+                    MonthlyData data = monthData.get(dayIndex);
+                    VBox dayCard = new VBox(5);
+                    dayCard.getStyleClass().add("calendar-day-card");
+                    Label dayNum = new Label(String.valueOf(data.getDay()));
+                    dayNum.setStyle("-fx-text-fill: #5D5A88; -fx-font-size: 14;");
+                    HBox content = new HBox(10);
+                    content.setAlignment(Pos.CENTER_LEFT);
+                    Label icon = new Label(getEmojiForCondition(data.getCondition().toLowerCase()));
+                    icon.setStyle("-fx-font-size: 22;");
+                    VBox temps = new VBox(0);
+                    Label high = new Label(Math.round(data.getHigh()) + "°");
+                    high.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+                    Label low = new Label(Math.round(data.getLow()) + "°");
+                    low.setStyle("-fx-text-fill: #A09EBC;");
+                    temps.getChildren().addAll(high, low);
+                    content.getChildren().addAll(icon, temps);
+                    dayCard.getChildren().addAll(dayNum, content);
+                    if (data.getDay() == 9) dayCard.getStyleClass().add("calendar-day-card-today");
+                    calendarGrid.add(dayCard, col, row);
+                    dayIndex++;
+                }
+            }
+        });
+        new Thread(task).start();
     }
 
     private String getEmojiForCondition(String cond) {
