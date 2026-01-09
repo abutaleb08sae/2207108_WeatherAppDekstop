@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="800.0" prefWidth="1000.0" spacing="20" styleClass="main-content" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
+    <padding>
+        <Insets bottom="30" left="30" right="30" top="30" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Button onAction="#showCurrentScene" styleClass="nav-button" text="← Back to Current" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label style="-fx-text-fill: white; -fx-font-size: 26; -fx-font-weight: bold;" text="Hourly Forecast" />
+    </HBox>
+
+    <ScrollPane fitToHeight="true" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
+        <HBox fx:id="hourlyCardsContainer" spacing="15" style="-fx-padding: 10 0 10 0;" />
+    </ScrollPane>
+
+    <VBox spacing="15" styleClass="weather-card" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets bottom="20" left="20" right="20" top="20" />
+        </padding>
+        <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Temperature Trend (°C)" />
+
+        <LineChart fx:id="tempChart" alternativeRowFillVisible="false" createSymbols="true" horizontalGridLinesVisible="true" legendVisible="false" verticalGridLinesVisible="false" VBox.vgrow="ALWAYS">
+            <xAxis>
+                <CategoryAxis side="BOTTOM" tickLabelFill="WHITE" tickLabelGap="10" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis forceZeroInRange="false" side="LEFT" tickLabelFill="WHITE" />
+            </yAxis>
+        </LineChart>
+    </VBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <VBox alignment="CENTER" styleClass="weather-card" prefWidth="200">
+            <Label styleClass="detail-label" text="Highest Today" />
+            <Label fx:id="highTempLabel" style="-fx-text-fill: white; -fx-font-size: 20;" text="--°" />
+        </VBox>
+        <VBox alignment="CENTER" styleClass="weather-card" prefWidth="200">
+            <Label styleClass="detail-label" text="Lowest Today" />
+            <Label fx:id="lowTempLabel" style="-fx-text-fill: white; -fx-font-size: 20;" text="--°" />
+        </VBox>
+    </HBox>
+</VBox>

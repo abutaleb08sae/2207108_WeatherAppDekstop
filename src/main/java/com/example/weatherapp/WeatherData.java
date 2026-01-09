@@ -1,5 +1,7 @@
 package com.example.weatherapp;
 
+import java.util.List;
+
 public class WeatherData {
     private String city;
     private String countryCode;
@@ -13,6 +15,9 @@ public class WeatherData {
     private double longitude;
     private String sunrise;
     private String sunset;
+    private List<HourlyPoint> hourlyForecast;
+
+    public record HourlyPoint(String time, double temp, String condition, int rainChance) {}
 
     public WeatherData(String city, String countryCode, double temp, String description, int humidity,
                        double windSpeed, int pressure, int aqi, double latitude,
@@ -43,6 +48,9 @@ public class WeatherData {
     public double getLongitude() { return longitude; }
     public String getSunrise() { return sunrise; }
     public String getSunset() { return sunset; }
+
+    public List<HourlyPoint> getHourlyForecast() { return hourlyForecast; }
+    public void setHourlyForecast(List<HourlyPoint> hourlyForecast) { this.hourlyForecast = hourlyForecast; }
 
     public String getAqiText() {
         return switch (aqi) {

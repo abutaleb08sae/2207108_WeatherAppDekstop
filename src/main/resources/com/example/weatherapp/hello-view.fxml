@@ -10,8 +10,8 @@
         <padding><Insets bottom="20" left="20" right="20" top="40" /></padding>
         <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
         <Region prefHeight="20" />
-        <Button maxWidth="Infinity" styleClass="nav-button-active" text="☀️ Current" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📅 Hourly" />
+        <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button-active" text="☀️ Current" />
+        <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
         <Button maxWidth="Infinity" styleClass="nav-button" text="📊 Details" />
         <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
         <Button maxWidth="Infinity" styleClass="nav-button" text="📅 Monthly" />
@@ -22,61 +22,62 @@
         <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <TextField fx:id="searchField" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="searchField" onAction="#handleSearch" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
             <Button onAction="#handleSearch" styleClass="search-button" text="Search" />
+            <Button onAction="#handleRefresh" styleClass="search-button" text="🔄" />
         </HBox>
 
-        <VBox spacing="15" styleClass="weather-card">
-            <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Khulna, Bangladesh" />
+        <VBox fx:id="weatherCard" spacing="15" styleClass="weather-card">
+            <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Detecting location..." />
 
             <VBox spacing="2">
                 <Label text="Current weather" style="-fx-text-fill: white; -fx-font-size: 14;"/>
-                <Label fx:id="timeLabel" text="8:57 PM" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;"/>
+                <Label fx:id="timeLabel" text="--:-- --" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;"/>
             </VBox>
 
             <HBox alignment="CENTER_LEFT" spacing="30">
                 <HBox alignment="CENTER_LEFT" spacing="15">
-                    <Label fx:id="weatherIcon" text="🌙" style="-fx-font-size: 60;"/>
-                    <Label fx:id="tempLabel" styleClass="big-temp" text="54°F" />
+                    <Label fx:id="weatherIcon" text="☁️" style="-fx-font-size: 80; -fx-text-fill: white;"/>
+                    <Label fx:id="tempLabel" styleClass="big-temp" text="--°C" />
                 </HBox>
 
                 <VBox alignment="CENTER_LEFT">
-                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Clear" />
-                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: white; -fx-font-size: 16;" text="Feels like 54°" />
+                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="--" />
+                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: white; -fx-font-size: 16;" text="Feels like --°" />
                 </VBox>
             </HBox>
 
             <Label fx:id="descriptionSentence" wrapText="true"
-                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0;"
-                   text="The skies will be mostly clear. The low will be 50°." />
+                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0; -fx-font-style: italic;"
+                   text="Waiting for data..." />
 
             <GridPane hgap="25" vgap="5">
                 <VBox GridPane.columnIndex="0">
                     <Label styleClass="detail-label" text="Air quality ⓘ" />
                     <HBox spacing="5" alignment="CENTER_LEFT">
-                        <Circle radius="4" fill="#FF4B4B"/>
-                        <Label fx:id="aqiLabel" styleClass="detail-value" text="181" />
+                        <Circle fx:id="aqiCircle" radius="4" fill="#A09EBC"/>
+                        <Label fx:id="aqiLabel" styleClass="detail-value" text="--" />
                     </HBox>
                 </VBox>
                 <VBox GridPane.columnIndex="1">
                     <Label styleClass="detail-label" text="Wind ⓘ" />
-                    <Label fx:id="windLabel" styleClass="detail-value" text="0 mph ▽" />
+                    <Label fx:id="windLabel" styleClass="detail-value" text="-- m/s" />
                 </VBox>
                 <VBox GridPane.columnIndex="2">
                     <Label styleClass="detail-label" text="Humidity ⓘ" />
-                    <Label fx:id="humidityLabel" styleClass="detail-value" text="92%" />
+                    <Label fx:id="humidityLabel" styleClass="detail-value" text="--%" />
                 </VBox>
                 <VBox GridPane.columnIndex="3">
                     <Label styleClass="detail-label" text="Visibility ⓘ" />
-                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="2.5 mi" />
+                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="-- km" />
                 </VBox>
                 <VBox GridPane.columnIndex="4">
                     <Label styleClass="detail-label" text="Pressure ⓘ" />
-                    <Label fx:id="pressureLabel" styleClass="detail-value" text="29.86 in" />
+                    <Label fx:id="pressureLabel" styleClass="detail-value" text="-- hPa" />
                 </VBox>
                 <VBox GridPane.columnIndex="5">
                     <Label styleClass="detail-label" text="Dew point ⓘ" />
-                    <Label fx:id="dewPointLabel" styleClass="detail-value" text="53°" />
+                    <Label fx:id="dewPointLabel" styleClass="detail-value" text="--°" />
                 </VBox>
             </GridPane>
         </VBox>

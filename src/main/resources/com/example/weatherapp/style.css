@@ -11,11 +11,17 @@
     -fx-alignment: center-left;
     -fx-padding: 10 20;
     -fx-font-size: 14;
+    -fx-cursor: hand;
 }
 
 .nav-button-active {
     -fx-background-color: #6C5CE7;
     -fx-text-fill: white;
+    -fx-background-radius: 10;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(108, 92, 231, 0.2);
     -fx-background-radius: 10;
 }
 
@@ -38,8 +44,17 @@
 
 .weather-card {
     -fx-background-color: #433D6E;
-    -fx-background-radius: 15;
+    -fx-background-radius: 20;
     -fx-padding: 25;
+}
+
+.mini-forecast-card {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 15;
+    -fx-padding: 15;
+    -fx-min-width: 100;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 15;
 }
 
 .map-container {
@@ -64,4 +79,45 @@
     -fx-text-fill: white;
     -fx-font-size: 18;
     -fx-font-weight: normal;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-series-line {
+    -fx-stroke: #6C5CE7;
+    -fx-stroke-width: 3px;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: #6C5CE7, white;
+    -fx-background-insets: 0, 2;
+    -fx-radius: 5px;
+}
+
+.axis {
+    -fx-tick-label-fill: #A09EBC;
+    -fx-tick-length: 10;
+}
+
+.axis-label {
+    -fx-text-fill: #D1CFE2;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal {
+    -fx-height: 8;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #3E3B6E;
+    -fx-background-radius: 10;
 }
