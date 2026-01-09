@@ -44,10 +44,21 @@ public class WeatherData {
     public double getWindSpeed() { return windSpeed; }
     public int getPressure() { return pressure; }
     public int getAqi() { return aqi; }
+    public int getAqiValue() { return aqi; }
     public double getLatitude() { return latitude; }
     public double getLongitude() { return longitude; }
     public String getSunrise() { return sunrise; }
     public String getSunset() { return sunset; }
+
+    // Dashboard specific mocks/methods for UI parity
+    public int getUvIndex() { return 4; }
+    public String getWindDirection() { return "N"; }
+    public double getWindGust() { return windSpeed * 1.2; }
+    public String getMoonrise() { return "11:24 PM"; }
+    public String getMoonset() { return "11:18 AM"; }
+    public String getMoonPhase() { return "63%"; }
+    public double getPrecipitation() { return 0.0; }
+    public int getCloudCover() { return 32; }
 
     public List<HourlyPoint> getHourlyForecast() { return hourlyForecast; }
     public void setHourlyForecast(List<HourlyPoint> hourlyForecast) { this.hourlyForecast = hourlyForecast; }

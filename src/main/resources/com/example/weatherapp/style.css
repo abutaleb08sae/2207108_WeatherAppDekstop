@@ -3,6 +3,8 @@
 .sidebar {
     -fx-background-color: #2D2B52;
     -fx-background-radius: 0 30 30 0;
+    -fx-min-width: 240;
+    -fx-pref-width: 240;
 }
 
 .nav-button, .nav-button-active {
@@ -10,8 +12,10 @@
     -fx-text-fill: #A09EBC;
     -fx-alignment: center-left;
     -fx-padding: 10 20;
-    -fx-font-size: 14;
+    -fx-font-size: 15;
     -fx-cursor: hand;
+    -fx-min-width: 210;
+    -fx-text-overrun: leading-word-ellipsis;
 }
 
 .nav-button-active {
@@ -48,6 +52,13 @@
     -fx-padding: 25;
 }
 
+.detail-tile {
+    -fx-background-color: #2D2B52;
+    -fx-background-radius: 12;
+    -fx-padding: 8;
+    -fx-alignment: center;
+}
+
 .mini-forecast-card {
     -fx-background-color: rgba(255, 255, 255, 0.05);
     -fx-background-radius: 15;
@@ -69,6 +80,12 @@
     -fx-font-weight: bold;
 }
 
+.tile-title {
+    -fx-text-fill: #A09EBC;
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+}
+
 .detail-label {
     -fx-text-fill: #D1CFE2;
     -fx-font-size: 13;
@@ -81,6 +98,29 @@
     -fx-font-weight: normal;
 }
 
+.tile-value-big {
+    -fx-text-fill: white;
+    -fx-font-size: 32;
+    -fx-font-weight: bold;
+}
+
+.tile-value {
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+}
+
+.big-detail-value {
+    -fx-text-fill: white;
+    -fx-font-size: 32;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0;
+}
+
+.tile-sub {
+    -fx-text-fill: #A09EBC;
+    -fx-font-size: 11;
+}
+
 .chart-plot-background {
     -fx-background-color: transparent;
 }
@@ -88,6 +128,24 @@
 .chart-series-line {
     -fx-stroke: #6C5CE7;
     -fx-stroke-width: 3px;
+}
+
+.sparkline {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.sparkline .chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.sparkline .chart-content {
+    -fx-padding: 0;
+}
+
+.sparkline .chart-series-line {
+    -fx-stroke: #FF7675;
+    -fx-stroke-width: 2px;
 }
 
 .default-color0.chart-line-symbol {
@@ -98,7 +156,7 @@
 
 .axis {
     -fx-tick-label-fill: #A09EBC;
-    -fx-tick-length: 10;
+    -fx-tick-length: 0;
 }
 
 .axis-label {
@@ -113,11 +171,23 @@
     -fx-background-color: transparent;
 }
 
-.scroll-bar:horizontal {
-    -fx-height: 8;
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: transparent;
 }
 
 .scroll-bar .thumb {
     -fx-background-color: #3E3B6E;
     -fx-background-radius: 10;
+}
+
+.aqi-bar {
+    -fx-accent: #6C5CE7;
+    -fx-control-inner-background: #2D2B52;
+    -fx-background-color: transparent;
+    -fx-padding: 5 0;
+}
+
+.weather-card:hover, .detail-tile:hover {
+    -fx-background-color: #4D477D;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);
 }
