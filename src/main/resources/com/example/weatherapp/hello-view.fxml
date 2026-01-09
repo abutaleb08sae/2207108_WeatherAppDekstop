@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.Circle?>
 
 <HBox prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
-    <VBox prefWidth="200" spacing="15" styleClass="sidebar">
+    <VBox prefWidth="240" spacing="15" styleClass="sidebar">
         <padding><Insets bottom="20" left="20" right="20" top="40" /></padding>
         <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
         <Region prefHeight="20" />
@@ -14,11 +14,11 @@
         <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button-active" text="☀️ Current" />
         <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
         <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
-
-        <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
-
         <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📈 Trends" />
+        <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
+        <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
+
+
     </VBox>
 
     <VBox spacing="20" styleClass="main-content" HBox.hgrow="ALWAYS">

@@ -2,9 +2,11 @@ package com.example.weatherapp;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -44,6 +46,8 @@ public class HelloController {
     @FXML private Arc uvArc;
     @FXML private GridPane calendarGrid;
 
+    @FXML private LineChart<String, Number> trendsChart;
+
     private static WeatherData currentWeatherData;
 
     @FXML
@@ -60,6 +64,7 @@ public class HelloController {
         if (calendarGrid != null) populateCalendar(LocalDate.now().getMonthValue());
         if (hourlyCardsContainer != null) populateHourlyUI();
         if (detailTimeHeader != null) populateDetailsUI();
+        if (trendsChart != null) populateTrendsUI();
     }
 
     @FXML
@@ -100,61 +105,56 @@ public class HelloController {
 
     private void updateUI(WeatherData data) {
         String fullCountryName = new Locale("", data.getCountryCode()).getDisplayCountry();
-        locationLabel.setText(data.getCity() + ", " + fullCountryName);
-        timeLabel.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm a")));
-        tempLabel.setText(Math.round(data.getTemp()) + "°C");
-        conditionLabel.setText(data.getDescription());
-        feelsLikeLabel.setText("Feels like " + Math.round(data.getTemp()) + "°C");
-        descriptionSentence.setText("The skies will be " + data.getDescription().toLowerCase() + ".");
-        weatherIcon.setText(getEmojiForCondition(data.getDescription().toLowerCase()));
-        windLabel.setText(data.getWindSpeed() + " m/s");
-        humidityLabel.setText(data.getHumidity() + "%");
-        pressureLabel.setText(data.getPressure() + " hPa");
-        aqiLabel.setText(data.getAqiText());
+        if (locationLabel != null) locationLabel.setText(data.getCity() + ", " + fullCountryName);
+        if (timeLabel != null) timeLabel.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm a")));
+        if (tempLabel != null) tempLabel.setText(Math.round(data.getTemp()) + "°C");
+        if (conditionLabel != null) conditionLabel.setText(data.getDescription());
+        if (feelsLikeLabel != null) feelsLikeLabel.setText("Feels like " + Math.round(data.getTemp()) + "°C");
+        if (descriptionSentence != null) descriptionSentence.setText("The skies will be " + data.getDescription().toLowerCase() + ".");
+        if (weatherIcon != null) weatherIcon.setText(getEmojiForCondition(data.getDescription().toLowerCase()));
+        if (windLabel != null) windLabel.setText(data.getWindSpeed() + " m/s");
+        if (humidityLabel != null) humidityLabel.setText(data.getHumidity() + "%");
+        if (pressureLabel != null) pressureLabel.setText(data.getPressure() + " hPa");
+        if (aqiLabel != null) aqiLabel.setText(data.getAqiText());
         updateAqiCircle(data.getAqi());
 
         double dp = data.getTemp() - ((100 - data.getHumidity()) / 5.0);
-        dewPointLabel.setText(Math.round(dp) + "°C");
+        if (dewPointLabel != null) dewPointLabel.setText(Math.round(dp) + "°C");
 
-        String mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=" +
-                (data.getLongitude() - 0.1) + "," + (data.getLatitude() - 0.1) + "," +
-                (data.getLongitude() + 0.1) + "," + (data.getLatitude() + 0.1) +
-                "&layer=mapnik&marker=" + data.getLatitude() + "," + data.getLongitude();
-        mapView.getEngine().load(mapUrl);
-    }
-
-    @FXML
-    public void showHourlyScene() { switchScene("hourly-view.fxml"); }
-
-    @FXML
-    public void showCurrentScene() { switchScene("hello-view.fxml"); }
-
-    @FXML
-    public void showDetailsScene() { switchScene("details-view.fxml"); }
-
-    @FXML
-    public void showMonthlyScene() { switchScene("monthly-view.fxml"); }
-
-    private void switchScene(String fxmlFile) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-            Parent root = loader.load();
-            Stage stage = findStage();
-            if (stage != null) {
-                stage.getScene().setRoot(root);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (mapView != null) {
+            String mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=" +
+                    (data.getLongitude() - 0.1) + "," + (data.getLatitude() - 0.1) + "," +
+                    (data.getLongitude() + 0.1) + "," + (data.getLatitude() + 0.1) +
+                    "&layer=mapnik&marker=" + data.getLatitude() + "," + data.getLongitude();
+            mapView.getEngine().load(mapUrl);
         }
     }
 
-    private Stage findStage() {
-        if (searchField != null && searchField.getScene() != null) return (Stage) searchField.getScene().getWindow();
-        if (locationLabel != null && locationLabel.getScene() != null) return (Stage) locationLabel.getScene().getWindow();
-        if (calendarGrid != null && calendarGrid.getScene() != null) return (Stage) calendarGrid.getScene().getWindow();
-        if (hourlyCardsContainer != null && hourlyCardsContainer.getScene() != null) return (Stage) hourlyCardsContainer.getScene().getWindow();
-        if (detailTimeHeader != null && detailTimeHeader.getScene() != null) return (Stage) detailTimeHeader.getScene().getWindow();
-        return null;
+    // --- NAVIGATION METHODS ---
+    @FXML
+    public void showHourlyScene(ActionEvent event) { switchScene(event, "hourly-view.fxml"); }
+
+    @FXML
+    public void showCurrentScene(ActionEvent event) { switchScene(event, "hello-view.fxml"); }
+
+    @FXML
+    public void showDetailsScene(ActionEvent event) { switchScene(event, "details-view.fxml"); }
+
+    @FXML
+    public void showMonthlyScene(ActionEvent event) { switchScene(event, "monthly-view.fxml"); }
+
+    @FXML
+    public void showTrendsScene(ActionEvent event) { switchScene(event, "trends-view.fxml"); }
+
+    private void switchScene(ActionEvent event, String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void populateHourlyUI() {
@@ -217,8 +217,29 @@ public class HelloController {
         if (compassNeedle != null) compassNeedle.setRotate(45);
     }
 
+    private void populateTrendsUI() {
+        if (trendsChart == null || currentWeatherData == null) return;
+        trendsChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Temperature Trend");
+
+        double max = -100, min = 100;
+        if (currentWeatherData.getHourlyForecast() != null) {
+            for (WeatherData.HourlyPoint point : currentWeatherData.getHourlyForecast()) {
+                XYChart.Data<String, Number> dataPoint = new XYChart.Data<>(point.time(), point.temp());
+                series.getData().add(dataPoint);
+
+                if (point.temp() > max) max = point.temp();
+                if (point.temp() < min) min = point.temp();
+            }
+        }
+        trendsChart.getData().add(series);
+        if (highTempLabel != null) highTempLabel.setText(Math.round(max) + "°C");
+        if (lowTempLabel != null) lowTempLabel.setText(Math.round(min) + "°C");
+    }
+
     @FXML
-    public void handleMonthClick(javafx.event.ActionEvent event) {
+    public void handleMonthClick(ActionEvent event) {
         if (monthBar == null) return;
         Button clicked = (Button) event.getSource();
         monthBar.getChildren().forEach(node -> node.getStyleClass().setAll("month-tab"));

@@ -13,19 +13,22 @@
         <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button-active" text="📅 Hourly" />
         <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
         <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📅 Monthly" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📈 Trends" />
+        <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
+        <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
+
     </VBox>
 
     <VBox spacing="20" HBox.hgrow="ALWAYS" style="-fx-background-color: #1A1938;">
         <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
 
-        <HBox alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="20">
             <Label style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;" text="Hourly Forecast" />
+            <Region HBox.hgrow="ALWAYS" />
+            <TextField fx:id="searchField" onAction="#handleSearch" promptText="Search city..." styleClass="search-field" prefWidth="250" />
         </HBox>
 
-        <ScrollPane fitToHeight="true" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER">
-            <HBox fx:id="hourlyCardsContainer" spacing="15" style="-fx-padding: 10 0 10 0;" />
+        <ScrollPane fitToHeight="true" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED">
+            <HBox fx:id="hourlyCardsContainer" spacing="15" style="-fx-padding: 10 5 10 5;" />
         </ScrollPane>
 
         <VBox spacing="15" styleClass="weather-card" VBox.vgrow="ALWAYS">
@@ -45,11 +48,11 @@
         </VBox>
 
         <HBox spacing="20" alignment="CENTER">
-            <VBox alignment="CENTER" styleClass="detail-tile" prefWidth="220" prefHeight="100">
+            <VBox alignment="CENTER" styleClass="detail-tile" prefWidth="250" prefHeight="100">
                 <Label styleClass="tile-title" text="Highest Today" />
                 <Label fx:id="highTempLabel" styleClass="tile-value-big" text="--°C" />
             </VBox>
-            <VBox alignment="CENTER" styleClass="detail-tile" prefWidth="220" prefHeight="100">
+            <VBox alignment="CENTER" styleClass="detail-tile" prefWidth="250" prefHeight="100">
                 <Label styleClass="tile-title" text="Lowest Today" />
                 <Label fx:id="lowTempLabel" styleClass="tile-value-big" text="--°C" />
             </VBox>

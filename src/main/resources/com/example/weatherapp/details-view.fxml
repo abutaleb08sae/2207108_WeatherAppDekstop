@@ -15,7 +15,7 @@
         <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button-active" text="📊 Details" />
         <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
         <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
-        <Button maxWidth="Infinity" styleClass="nav-button" text="📈 Trends" />
+        <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button" text="📈 Trends" />
     </VBox>
 
     <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: #1A1938;">
@@ -24,7 +24,7 @@
         <HBox alignment="CENTER_LEFT">
             <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="Weather details" />
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="detailTimeHeader" style="-fx-text-fill: #A09EBC; -fx-font-size: 14;" text="11:45 AM" />
+            <Label fx:id="detailTimeHeader" style="-fx-text-fill: #A09EBC; -fx-font-size: 14;" text="--:-- --" />
         </HBox>
 
         <GridPane hgap="12" vgap="12" VBox.vgrow="ALWAYS">
@@ -38,35 +38,35 @@
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <Label styleClass="tile-title" text="Temperature" />
-                <Label fx:id="detTemp" styleClass="tile-value-big" text="23°" />
+                <Label fx:id="detTemp" styleClass="tile-value-big" text="--°" />
                 <LineChart fx:id="miniTempChart" animated="false" createSymbols="false" legendVisible="false" styleClass="sparkline" maxHeight="60">
                     <xAxis><CategoryAxis side="BOTTOM" opacity="0"/></xAxis>
                     <yAxis><NumberAxis side="LEFT" opacity="0"/></yAxis>
                 </LineChart>
-                <Label styleClass="tile-sub" text="Rising with a peak of 72°" />
+                <Label styleClass="tile-sub" text="Temperature variation" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <Label styleClass="tile-title" text="Feels like" />
                 <Region VBox.vgrow="ALWAYS" />
-                <Label fx:id="feelsLikeLabel" styleClass="tile-value-big" text="23°" />
-                <Label styleClass="tile-sub" text="Comfortable" />
+                <Label fx:id="feelsLikeLabel" styleClass="tile-value-big" text="--°" />
+                <Label styleClass="tile-sub" text="Apparent temperature" />
                 <Region VBox.vgrow="ALWAYS" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="2" GridPane.rowIndex="0">
                 <Label styleClass="tile-title" text="Cloud cover" />
-                <Label text="Mostly Sunny" styleClass="tile-value" />
-                <Label styleClass="tile-sub" text="Mostly Sunny (32%)" />
+                <Label fx:id="conditionLabel" text="Loading..." styleClass="tile-value" />
+                <Label styleClass="tile-sub" text="Sky condition" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="3" GridPane.rowIndex="0">
                 <Label styleClass="tile-title" text="Precipitation" />
                 <StackPane prefHeight="50">
                     <Circle radius="25" stroke="#3E3B6E" fill="transparent" strokeWidth="2" />
-                    <Label text="0 in" styleClass="tile-value" />
+                    <Label text="0%" styleClass="tile-value" />
                 </StackPane>
-                <Label styleClass="tile-sub" text="No precipitation" />
+                <Label styleClass="tile-sub" text="Chance of rain" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -76,61 +76,61 @@
                     <Polygon fx:id="compassNeedle" points="0,0, 4,12, -4,12" fill="#6C5CE7" />
                     <Label text="N" StackPane.alignment="TOP_CENTER" style="-fx-text-fill: white; -fx-font-size: 10;"/>
                 </StackPane>
-                <Label fx:id="detWind" styleClass="tile-value" text="2.91 mph" />
-                <Label styleClass="tile-sub" text="Force: 0 (Calm)" />
+                <Label fx:id="detWind" styleClass="tile-value" text="-- m/s" />
+                <Label styleClass="tile-sub" text="Speed" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <Label styleClass="tile-title" text="Humidity" />
-                <Label fx:id="detHum" styleClass="tile-value-big" text="31%" />
-                <Label fx:id="detDew" text="9° Dew point" styleClass="tile-sub" />
+                <Label fx:id="detHum" styleClass="tile-value-big" text="--%" />
+                <Label fx:id="detDew" text="--° Dew point" styleClass="tile-sub" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="2" GridPane.rowIndex="1">
                 <Label styleClass="tile-title" text="UV" />
                 <StackPane prefHeight="60">
                     <Arc fx:id="uvArc" length="180" radiusX="35" radiusY="35" startAngle="0" strokeWidth="6" fill="transparent" style="-fx-stroke: #F1C40F;"/>
-                    <Label fx:id="detUv" styleClass="tile-value-big" text="4" />
+                    <Label fx:id="detUv" styleClass="tile-value-big" text="--" />
                 </StackPane>
-                <Label styleClass="tile-sub" text="Moderate" />
+                <Label styleClass="tile-sub" text="Index" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="3" GridPane.rowIndex="1">
                 <Label styleClass="tile-title" text="AQI" />
                 <StackPane prefHeight="60">
-                    <Circle radius="30" stroke="#E74C3C" strokeWidth="6" fill="transparent" />
-                    <Label fx:id="detAqi" styleClass="tile-value-big" text="5" />
+                    <Circle fx:id="aqiCircle" radius="30" stroke="#3E3B6E" strokeWidth="6" fill="transparent" />
+                    <Label fx:id="detAqi" styleClass="tile-value-big" text="--" />
                 </StackPane>
-                <Label styleClass="tile-sub" text="Unhealthy" />
+                <Label fx:id="aqiLabel" styleClass="tile-sub" text="Quality" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="0" GridPane.rowIndex="2">
                 <Label styleClass="tile-title" text="Visibility" />
-                <Label fx:id="detailVisibility" styleClass="tile-value-big" text="10 km" />
-                <Label styleClass="tile-sub" text="Excellent" />
+                <Label fx:id="detailVisibility" styleClass="tile-value-big" text="-- km" />
+                <Label styleClass="tile-sub" text="Clarity" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <Label styleClass="tile-title" text="Pressure" />
-                <Label fx:id="detailPressure" text="1018 hPa" styleClass="tile-value" />
-                <Label styleClass="tile-sub" text="Falling slowly" />
+                <Label fx:id="detailPressure" text="-- hPa" styleClass="tile-value" />
+                <Label styleClass="tile-sub" text="Atmospheric" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                <Label styleClass="tile-title" text="Moon" />
+                <Label styleClass="tile-title" text="Sun" />
                 <StackPane prefHeight="40">
                     <Arc length="180" radiusX="35" radiusY="25" startAngle="0" stroke="#F1C40F" strokeWidth="2" fill="transparent" />
                 </StackPane>
-                <Label text="11:24 PM Moonrise" styleClass="tile-sub" />
+                <Label fx:id="timeLabel" text="--:-- --" styleClass="tile-sub" />
             </VBox>
 
             <VBox styleClass="detail-tile" GridPane.columnIndex="3" GridPane.rowIndex="2">
                 <Label styleClass="tile-title" text="Moon phase" />
                 <HBox spacing="10" alignment="CENTER">
                     <Circle radius="20" fill="#F1C40F" />
-                    <Label fx:id="detMoon" text="63%" styleClass="tile-value-big" />
+                    <Label fx:id="detMoon" text="--" styleClass="tile-value-big" />
                 </HBox>
-                <Label styleClass="tile-sub" text="Phase of moon" />
+                <Label styleClass="tile-sub" text="Current phase" />
             </VBox>
         </GridPane>
     </VBox>

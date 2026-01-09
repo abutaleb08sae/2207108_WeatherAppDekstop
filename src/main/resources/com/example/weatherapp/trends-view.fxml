@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.weatherapp.HelloController">
+    <children>
+        <VBox prefHeight="800.0" prefWidth="240.0" spacing="15" styleClass="sidebar">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="40" />
+            </padding>
+            <children>
+                <Label style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="WeatherApp" />
+                <Region prefHeight="20" />
+
+                <Button maxWidth="Infinity" onAction="#showCurrentScene" styleClass="nav-button" text="☀️ Current" />
+                <Button maxWidth="Infinity" onAction="#showHourlyScene" styleClass="nav-button" text="📅 Hourly" />
+                <Button maxWidth="Infinity" onAction="#showDetailsScene" styleClass="nav-button" text="📊 Details" />
+                <Button maxWidth="Infinity" styleClass="nav-button" text="📍 Maps" />
+                <Button maxWidth="Infinity" onAction="#showMonthlyScene" styleClass="nav-button" text="📅 Monthly" />
+                <Button maxWidth="Infinity" onAction="#showTrendsScene" styleClass="nav-button-active" text="📈 Trends" />
+            </children>
+        </VBox>
+
+        <VBox layoutX="260.0" layoutY="20.0" prefHeight="760.0" prefWidth="910.0" spacing="20.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <children>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;" text="Weather Trends" />
+                        <Label fx:id="locationLabel" style="-fx-text-fill: #A09EBC; -fx-font-size: 18;" text="Loading city..." />
+                    </children>
+                </HBox>
+
+                <VBox spacing="15" styleClass="weather-card" VBox.vgrow="ALWAYS">
+                    <children>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="24-Hour Temperature Variation" />
+                        <LineChart fx:id="trendsChart" createSymbols="true" legendVisible="false" styleClass="trend-line-chart" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM" tickLabelFill="WHITE" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Temperature (°C)" side="LEFT" tickLabelFill="WHITE" />
+                            </yAxis>
+                        </LineChart>
+                    </children>
+                </VBox>
+
+                <HBox spacing="20">
+                    <children>
+                        <VBox prefHeight="100.0" prefWidth="445.0" styleClass="detail-tile">
+                            <children>
+                                <Label styleClass="tile-title" text="Daily High" />
+                                <Label fx:id="highTempLabel" styleClass="tile-value-big" text="--°C" />
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="100.0" prefWidth="445.0" styleClass="detail-tile">
+                            <children>
+                                <Label styleClass="tile-title" text="Daily Low" />
+                                <Label fx:id="lowTempLabel" styleClass="tile-value-big" text="--°C" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
