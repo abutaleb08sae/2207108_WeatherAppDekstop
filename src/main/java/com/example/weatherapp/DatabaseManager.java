@@ -16,10 +16,14 @@ public class DatabaseManager {
         }
     }
 
+    private static Connection connect() throws SQLException {
+        return DriverManager.getConnection(URL);
+    }
+
     public static void saveSearch(String city) {
         if (city == null || city.trim().isEmpty()) return;
         String sql = "INSERT OR REPLACE INTO history(city, search_time) VALUES(?, CURRENT_TIMESTAMP)";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, city.trim());
             pstmt.executeUpdate();
@@ -31,7 +35,7 @@ public class DatabaseManager {
     public static List<String> getHistory() {
         List<String> cities = new ArrayList<>();
         String sql = "SELECT city FROM history ORDER BY search_time DESC LIMIT 10";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -44,11 +48,22 @@ public class DatabaseManager {
     }
 
     public static void deleteSearch(String city) {
+        if (city == null) return;
         String sql = "DELETE FROM history WHERE city = ?";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, city);
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void clearAllHistory() {
+        String sql = "DELETE FROM history";
+        try (Connection conn = connect();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }

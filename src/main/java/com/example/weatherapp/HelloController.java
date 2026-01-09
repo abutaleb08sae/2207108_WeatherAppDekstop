@@ -32,22 +32,20 @@ import java.util.Locale;
 public class HelloController {
     @FXML private TextField searchField;
     @FXML private ListView<String> historyListView;
+    @FXML private VBox historyContainer;
     @FXML private Label tempLabel, locationLabel, conditionLabel, feelsLikeLabel;
     @FXML private Label windLabel, humidityLabel, pressureLabel, visibilityLabel;
     @FXML private Label aqiLabel, dewPointLabel, timeLabel, descriptionSentence, weatherIcon;
     @FXML private WebView mapView, interactiveMapView;
     @FXML private Circle aqiCircle;
-
     @FXML private HBox hourlyCardsContainer, monthBar;
     @FXML private LineChart<String, Number> tempChart;
     @FXML private Label highTempLabel, lowTempLabel;
-
     @FXML private Label detailTimeHeader, detTemp, detWind, detHum, detDew, detAqi, detUv, detMoon, detailVisibility, detailPressure;
     @FXML private LineChart<String, Number> miniTempChart;
     @FXML private Polygon compassNeedle;
     @FXML private Arc uvArc;
     @FXML private GridPane calendarGrid;
-
     @FXML private LineChart<String, Number> trendsChart;
 
     private static WeatherData currentWeatherData;
@@ -67,7 +65,6 @@ public class HelloController {
 
     private void setupHistoryUI() {
         if (historyListView == null) return;
-
         historyListView.setCellFactory(lv -> new ListCell<String>() {
             @Override
             protected void updateItem(String city, boolean empty) {
@@ -79,12 +76,10 @@ public class HelloController {
                     HBox container = new HBox();
                     container.setAlignment(Pos.CENTER_LEFT);
                     container.setSpacing(10);
-
                     Label nameLabel = new Label(city);
                     nameLabel.setStyle("-fx-text-fill: white;");
                     nameLabel.setMaxWidth(Double.MAX_VALUE);
                     HBox.setHgrow(nameLabel, Priority.ALWAYS);
-
                     Label deleteBtn = new Label("✕");
                     deleteBtn.getStyleClass().add("delete-icon");
                     deleteBtn.setOnMouseClicked(e -> {
@@ -92,10 +87,8 @@ public class HelloController {
                         updateHistoryList();
                         e.consume();
                     });
-
                     container.getChildren().addAll(nameLabel, deleteBtn);
                     setGraphic(container);
-
                     this.setOnMouseClicked(e -> {
                         if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY && !deleteBtn.isHover()) {
                             searchField.setText(city);
@@ -106,22 +99,15 @@ public class HelloController {
                 }
             }
         });
-
         searchField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
                 updateHistoryList();
             } else {
                 Platform.runLater(() -> {
-                    if (!historyListView.isFocused()) {
+                    if (historyContainer != null && !historyContainer.isFocused() && !historyListView.isFocused()) {
                         hideHistory();
                     }
                 });
-            }
-        });
-
-        historyListView.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal && !searchField.isFocused()) {
-                hideHistory();
             }
         });
     }
@@ -131,23 +117,34 @@ public class HelloController {
         updateHistoryList();
     }
 
+    @FXML
+    public void handleClearAllHistory() {
+        DatabaseManager.clearAllHistory();
+        Platform.runLater(() -> {
+            if (historyListView != null) {
+                historyListView.getItems().clear();
+            }
+            hideHistory();
+        });
+    }
+
     private void updateHistoryList() {
-        if (historyListView == null) return;
+        if (historyListView == null || historyContainer == null) return;
         List<String> history = DatabaseManager.getHistory();
-        if (!history.isEmpty()) {
+        if (history != null && !history.isEmpty()) {
             historyListView.getItems().setAll(history);
-            historyListView.setVisible(true);
-            historyListView.setManaged(true);
-            historyListView.toFront();
+            historyContainer.setVisible(true);
+            historyContainer.setManaged(true);
+            historyContainer.toFront();
         } else {
             hideHistory();
         }
     }
 
     private void hideHistory() {
-        if (historyListView != null) {
-            historyListView.setVisible(false);
-            historyListView.setManaged(false);
+        if (historyContainer != null) {
+            historyContainer.setVisible(false);
+            historyContainer.setManaged(false);
         }
     }
 
@@ -214,10 +211,8 @@ public class HelloController {
         if (pressureLabel != null) pressureLabel.setText(data.getPressure() + " hPa");
         if (aqiLabel != null) aqiLabel.setText(data.getAqiText());
         updateAqiCircle(data.getAqi());
-
         double dp = data.getTemp() - ((100 - data.getHumidity()) / 5.0);
         if (dewPointLabel != null) dewPointLabel.setText(Math.round(dp) + "°C");
-
         if (mapView != null) {
             String mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=" +
                     (data.getLongitude() - 0.1) + "," + (data.getLatitude() - 0.1) + "," +

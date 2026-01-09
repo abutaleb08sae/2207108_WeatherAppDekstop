@@ -27,75 +27,80 @@
             <Insets bottom="20" left="30" right="30" top="20" />
         </padding>
 
-        <AnchorPane>
-            <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <StackPane alignment="TOP_LEFT">
+            <VBox spacing="20">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <TextField fx:id="searchField" onAction="#handleSearch" onMouseClicked="#showHistory" promptText="Enter city (e.g. Dhaka, London)" styleClass="search-field" HBox.hgrow="ALWAYS" />
                     <Button onAction="#handleSearch" styleClass="search-button" text="Search" />
                     <Button onAction="#handleRefresh" styleClass="search-button" text="🔄" />
                 </HBox>
-            </VBox>
 
-            <ListView fx:id="historyListView" managed="false" visible="false" maxHeight="250" styleClass="history-list"
-                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="46.0" />
-        </AnchorPane>
+                <VBox fx:id="weatherCard" spacing="15" styleClass="weather-card">
+                    <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Detecting location..." />
 
-        <VBox fx:id="weatherCard" spacing="15" styleClass="weather-card">
-            <Label fx:id="locationLabel" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Detecting location..." />
+                    <VBox spacing="2">
+                        <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Current weather" />
+                        <Label fx:id="timeLabel" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;" text="--:-- --" />
+                    </VBox>
 
-            <VBox spacing="2">
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Current weather" />
-                <Label fx:id="timeLabel" style="-fx-text-fill: #D1CFE2; -fx-font-size: 12;" text="--:-- --" />
-            </VBox>
+                    <HBox alignment="CENTER_LEFT" spacing="30">
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <Label fx:id="weatherIcon" style="-fx-font-size: 80; -fx-text-fill: white;" text="☁️" />
+                            <Label fx:id="tempLabel" styleClass="big-temp" text="--°C" />
+                        </HBox>
 
-            <HBox alignment="CENTER_LEFT" spacing="30">
-                <HBox alignment="CENTER_LEFT" spacing="15">
-                    <Label fx:id="weatherIcon" style="-fx-font-size: 80; -fx-text-fill: white;" text="☁️" />
-                    <Label fx:id="tempLabel" styleClass="big-temp" text="--°C" />
-                </HBox>
-
-                <VBox alignment="CENTER_LEFT">
-                    <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="--" />
-                    <Label fx:id="feelsLikeLabel" style="-fx-text-fill: white; -fx-font-size: 16;" text="Feels like --°" />
-                </VBox>
-            </HBox>
-
-            <Label fx:id="descriptionSentence" style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0; -fx-font-style: italic;" text="Waiting for data..." wrapText="true" />
-
-            <GridPane hgap="25" vgap="5">
-                <VBox GridPane.columnIndex="0">
-                    <Label styleClass="detail-label" text="Air quality ⓘ" />
-                    <HBox alignment="CENTER_LEFT" spacing="5">
-                        <Circle fx:id="aqiCircle" fill="#A09EBC" radius="4" />
-                        <Label fx:id="aqiLabel" styleClass="detail-value" text="--" />
+                        <VBox alignment="CENTER_LEFT">
+                            <Label fx:id="conditionLabel" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="--" />
+                            <Label fx:id="feelsLikeLabel" style="-fx-text-fill: white; -fx-font-size: 16;" text="Feels like --°" />
+                        </VBox>
                     </HBox>
-                </VBox>
-                <VBox GridPane.columnIndex="1">
-                    <Label styleClass="detail-label" text="Wind ⓘ" />
-                    <Label fx:id="windLabel" styleClass="detail-value" text="-- m/s" />
-                </VBox>
-                <VBox GridPane.columnIndex="2">
-                    <Label styleClass="detail-label" text="Humidity ⓘ" />
-                    <Label fx:id="humidityLabel" styleClass="detail-value" text="--%" />
-                </VBox>
-                <VBox GridPane.columnIndex="3">
-                    <Label styleClass="detail-label" text="Visibility ⓘ" />
-                    <Label fx:id="visibilityLabel" styleClass="detail-value" text="-- km" />
-                </VBox>
-                <VBox GridPane.columnIndex="4">
-                    <Label styleClass="detail-label" text="Pressure ⓘ" />
-                    <Label fx:id="pressureLabel" styleClass="detail-value" text="-- hPa" />
-                </VBox>
-                <VBox GridPane.columnIndex="5">
-                    <Label styleClass="detail-label" text="Dew point ⓘ" />
-                    <Label fx:id="dewPointLabel" styleClass="detail-value" text="--°" />
-                </VBox>
-            </GridPane>
-        </VBox>
 
-        <VBox styleClass="map-container" spacing="10" VBox.vgrow="ALWAYS">
-            <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Location Map" />
-            <WebView fx:id="mapView" VBox.vgrow="ALWAYS" />
-        </VBox>
+                    <Label fx:id="descriptionSentence" style="-fx-text-fill: white; -fx-font-size: 18; -fx-padding: 5 0 10 0; -fx-font-style: italic;" text="Waiting for data..." wrapText="true" />
+
+                    <GridPane hgap="25" vgap="5">
+                        <VBox GridPane.columnIndex="0">
+                            <Label styleClass="detail-label" text="Air quality ⓘ" />
+                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                <Circle fx:id="aqiCircle" fill="#A09EBC" radius="4" />
+                                <Label fx:id="aqiLabel" styleClass="detail-value" text="--" />
+                            </HBox>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1">
+                            <Label styleClass="detail-label" text="Wind ⓘ" />
+                            <Label fx:id="windLabel" styleClass="detail-value" text="-- m/s" />
+                        </VBox>
+                        <VBox GridPane.columnIndex="2">
+                            <Label styleClass="detail-label" text="Humidity ⓘ" />
+                            <Label fx:id="humidityLabel" styleClass="detail-value" text="--%" />
+                        </VBox>
+                        <VBox GridPane.columnIndex="3">
+                            <Label styleClass="detail-label" text="Visibility ⓘ" />
+                            <Label fx:id="visibilityLabel" styleClass="detail-value" text="-- km" />
+                        </VBox>
+                        <VBox GridPane.columnIndex="4">
+                            <Label styleClass="detail-label" text="Pressure ⓘ" />
+                            <Label fx:id="pressureLabel" styleClass="detail-value" text="-- hPa" />
+                        </VBox>
+                        <VBox GridPane.columnIndex="5">
+                            <Label styleClass="detail-label" text="Dew point ⓘ" />
+                            <Label fx:id="dewPointLabel" styleClass="detail-value" text="--°" />
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <VBox spacing="10" styleClass="map-container" VBox.vgrow="ALWAYS">
+                    <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Location Map" />
+                    <WebView fx:id="mapView" VBox.vgrow="ALWAYS" />
+                </VBox>
+            </VBox>
+
+            <VBox fx:id="historyContainer" managed="false" maxHeight="300" maxWidth="600" styleClass="history-list" visible="false">
+                <StackPane.margin>
+                    <Insets right="125.0" top="46.0" />
+                </StackPane.margin>
+                <ListView fx:id="historyListView" VBox.vgrow="ALWAYS" />
+                <Button maxWidth="Infinity" onAction="#handleClearAllHistory" styleClass="clear-history-btn" text="Clear All History" />
+            </VBox>
+        </StackPane>
     </VBox>
 </HBox>
