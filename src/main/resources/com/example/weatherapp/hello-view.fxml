@@ -94,7 +94,7 @@
                 </VBox>
             </VBox>
 
-            <VBox fx:id="historyContainer" managed="false" maxHeight="300" maxWidth="600" styleClass="history-list" visible="false">
+            <VBox fx:id="historyContainer" managed="false" maxHeight="350" maxWidth="600" styleClass="history-list" visible="false">
                 <StackPane.margin>
                     <Insets right="125.0" top="46.0" />
                 </StackPane.margin>
